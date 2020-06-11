@@ -6,7 +6,6 @@ import argparse
 from data import BaseTransform, VOC_CLASSES as labelmap
 from ssd import build_ssd
 import imageio
-import matplotlib.pyplot as plt
 from pyimagesearch.centroidtracker import CentroidTracker
 
 parser= argparse.ArgumentParser()
@@ -68,5 +67,5 @@ def detect(frame, net, transform):
 for i, frame in enumerate(reader):
     frame = detect(frame, net.eval(), transform)
     writer.append_data(frame)
-    print(i) # We print the number of the processed frame.
+    print(i) 
 writer.close() # We close the video
