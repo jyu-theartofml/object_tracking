@@ -85,7 +85,7 @@ def tracking(frame, net, transform, f_idx, track_pts):
         j = 0
         rects = []
         # We take into account all the occurrences j of the class i that have a matching score larger than 0.6.
-        while detections[0, i, j, 0] >= 0.6:
+        while detections[0, i, j, 0] >= 0.65:
             # We get the coordinates of the points at the upper left and the lower right of the detector rectangle.
             pt = (detections[0, i, j, 1:] * scale).numpy()
             cv2.rectangle(
@@ -142,7 +142,7 @@ def tracking(frame, net, transform, f_idx, track_pts):
     return frame, track_pts
 
 
-track1 = deque(maxlen=40)  # initialize list
+track1 = deque(maxlen=60)  # initialize list
 ct = CentroidTracker()
 for i, frame in enumerate(reader):
     out_frame, track1 = tracking(frame, net, transform, i, track1)
