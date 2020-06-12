@@ -98,28 +98,28 @@ def tracking(frame, net, transform, f_idx, track_pts):
             # save the bounding box coordinates (startX, startY, endX, endY)
             rects.append((int(pt[0]), int(pt[1]), int(pt[2]), int(pt[3])))
             j += 1
-        objects = ct.update(rects)
+            objects = ct.update(rects)
 
-        # loop over the tracked centroids
-        centroid_pts[f_idx][i] = {}
-        for (objectID, centroid) in objects.items():
-            # add centroid pt to deque list for each class
-            w = {objectID: centroid}
-            centroid_pts[f_idx][i].update(w)
+            # loop over the tracked centroids
+            centroid_pts[f_idx][i] = {}
+            for (objectID, centroid) in objects.items():
+                # add centroid pt to deque list for each class
+                w = {objectID: centroid}
+                centroid_pts[f_idx][i].update(w)
 
-            #  draw the centroid of the object on the output frame
-            cv2.circle(frame, (centroid[0], centroid[1]), 15, color_ls[i], -1)
-            text = labelmap[i - 1] + "_" + str(objectID)
-            cv2.putText(
-                frame,
-                text,
-                (centroid[0] - 10, centroid[1] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (0, 255, 0),
-                2,
-                cv2.LINE_AA,
-            )
+                #  draw the centroid of the object on the output frame
+                cv2.circle(frame, (centroid[0], centroid[1]), 15, color_ls[i], -1)
+                text = labelmap[i - 1] + "_" + str(objectID)
+                cv2.putText(
+                    frame,
+                    text,
+                    (centroid[0] - 10, centroid[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (0, 255, 0),
+                    2,
+                    cv2.LINE_AA,
+                )
 
     track_pts.appendleft(centroid_pts)  # update the deque list
     # loop through track_pts list and plot the "contrails" of the object_tracking

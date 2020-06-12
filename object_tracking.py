@@ -73,22 +73,22 @@ def detect(frame, net, transform):
             # (startX, startY, endX, endY)
             rects.append((int(pt[0]), int(pt[1]), int(pt[2]), int(pt[3])))
             j += 1
-        objects = ct.update(rects)
-        # loop over the tracked objects
-        for (objectID, centroid) in objects.items():
-            # draw the centroid of the object on the output frame and put text on the frame
-            text = labelmap[i - 1] + "_" + str(objectID)
-            cv2.putText(
-                frame,
-                text,
-                (centroid[0] - 10, centroid[1] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (0, 255, 0),
-                2,
-                cv2.LINE_AA,
-            )
-            cv2.circle(frame, (centroid[0], centroid[1]), 10, (0, 255, 0), -1)
+            objects = ct.update(rects)
+            # loop over the tracked objects
+            for (objectID, centroid) in objects.items():
+                # draw the centroid of the object on the output frame and put text on the frame
+                text = labelmap[i - 1] + "_" + str(objectID)
+                cv2.putText(
+                    frame,
+                    text,
+                    (centroid[0] - 10, centroid[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    2,
+                    (0, 255, 0),
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.circle(frame, (centroid[0], centroid[1]), 10, (0, 255, 0), -1)
     return frame
 
 
