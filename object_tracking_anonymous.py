@@ -151,7 +151,7 @@ for i, frame in enumerate(reader):
     background = baseframe.copy()
     base_img.append(background)
     # a trick to clear out the base frame
-    g = base_img[-1]
+    g = base_img.pop()
     out_frame, track1 = tracking(frame, net, transform, i, track1, g)
     writer.append_data(out_frame)
     print(i)
