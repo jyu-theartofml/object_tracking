@@ -19,15 +19,15 @@ parser.add_argument(
 args = parser.parse_args()
 
 reader = imageio.get_reader(args.input)
-# We get the fps frequence (frames per second).
+# get the fps frequence (frames per second).
 fps = reader.get_meta_data()["fps"]
-# We create an output video with this same fps frequence.
+# create an output video with this same fps frequence.
 writer = imageio.get_writer(args.output, fps=fps)
 
 # Creating the SSD neural network
-net = build_ssd("test")  # We create an object that is our neural network ssd.
+net = build_ssd("test")
 net.load_state_dict(torch.load(args.weight, map_location=lambda storage, loc: storage))
-# We create an object of the BaseTransform class, a class that will do the required transformations so that the image can be the input of the neural network.
+# We create an object of the BaseTransform class,to transform/normalize image arrays for the neural network.
 transform = BaseTransform(net.size, (104 / 256.0, 117 / 256.0, 123 / 256.0))
 
 # Defining a function that will do the detections and object class tracking
@@ -42,17 +42,15 @@ def tracking(frame, net, transform, f_idx, track_pts, base_frame):
     track_pts: deque collection of centroids
     base_frame: use first frame
     """
-    height, width = frame.shape[:2]  # We get the height and the width of the frame.
-    frame_t = transform(frame)[0]  # We apply the transformation to our frame.
-    # We convert the frame into a torch tensor.
+    height, width = frame.shape[:2]
+    frame_t = transform(frame)[0]
     x = torch.from_numpy(frame_t).permute(2, 0, 1)
-    x = x.unsqueeze(0)  # We add a fake dimension corresponding to the batch.
+    x = x.unsqueeze(0)
     with torch.no_grad():
-        # We feed the neural network ssd with the image and we get the output y.
+        # We feed the neural network ssd with the image to get prediction output.
         y = net(x)
-    # the dimension is (N,i,j,b), i is the class, j is the number of detecttion, b axis is confidence and bounding box coordinates
+    # the dimension is (N,i,j,b), i is the class, j is the number of detection (200), b axis is confidence and bounding box coordinates
     detections = y.data
-    # We create a tensor object of dimensions [width, height, width, height].
     scale = torch.Tensor([width, height, width, height])
 
     # keep track of centroid points for this individual frame
@@ -81,13 +79,12 @@ def tracking(frame, net, transform, f_idx, track_pts, base_frame):
         (174, 149, 85),
     ]
 
-    for i in range(detections.size(1)):  # For every class:
-        # We initialize the loop variable j that will correspond to the occurrences of the class.
+    for i in range(detections.size(1)):
         j = 0
         rects = []
-        # We take into account all the occurrences j of the class i that have a matching score larger than 0.6.
-        while detections[0, i, j, 0] >= 0.65:
-            # We get the coordinates of the points at the upper left and the lower right of the detector rectangle.
+        # for each class, filter for bbox with confidence score >=0.6.
+        while detections[0, i, j, 0] >= 0.60:
+            # SSD returns the points at the upper left and the lower right of the bbox
             pt = (detections[0, i, j, 1:] * scale).numpy()
             cv2.rectangle(
                 base_frame,
@@ -104,7 +101,7 @@ def tracking(frame, net, transform, f_idx, track_pts, base_frame):
             # loop over the tracked centroids
             centroid_pts[f_idx][i] = {}
             for (objectID, centroid) in objects.items():
-                # add centroid pt to deque list for each class
+                # add centroid pt to list for each class
                 w = {objectID: centroid}
                 centroid_pts[f_idx][i].update(w)
 
@@ -123,7 +120,7 @@ def tracking(frame, net, transform, f_idx, track_pts, base_frame):
                 )
 
     track_pts.appendleft(centroid_pts)  # update the deque list
-    # loop through track_pts list and plot the "contrails" of the object_tracking
+    # loop through track_pts list and plot the "contrails" of the tracked object
     for i in range(len(track_pts) - 1):
         frame_idx = list(track1[i].keys())[0]
         current = track1[i][frame_idx]
@@ -155,4 +152,4 @@ for i, frame in enumerate(reader):
     out_frame, track1 = tracking(frame, net, transform, i, track1, g)
     writer.append_data(out_frame)
     print(i)
-writer.close()  # We close the video
+writer.close()
