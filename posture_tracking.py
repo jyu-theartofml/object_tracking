@@ -1,8 +1,10 @@
+import os
+os.chdir('pytorch-openpose/')
+
 import sys
 import cv2
 import model
 import src.util
-from src.hand import Hand
 from src.body import Body
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +13,7 @@ import time
 import torch
 import imageio
 import argparse
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", required=True, help="path to input video")
