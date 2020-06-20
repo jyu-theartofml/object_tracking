@@ -166,8 +166,8 @@ def detect_posture(canvas, net):
             canvas = cv2.addWeighted(canvas, 0.4, cur_canvas, 0.6, 0)
 
         # put this after the blending of canvas and cur_canvas so runner labels show up clearly
-        if (0 < abs(left_arm_deg) < 100 or 0 < abs(right_arm_deg) < 100) & (
-            0 < abs(left_leg_deg) < 140 or 0 < abs(right_leg_deg) < 140
+        if (0 < abs(left_arm_deg) < 95 or 0 < abs(right_arm_deg) < 95) & (
+            0 < abs(left_leg_deg) < 120 or 0 < abs(right_leg_deg) < 120
         ):
             cv2.putText(
                 canvas,
