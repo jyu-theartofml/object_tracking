@@ -73,17 +73,16 @@ colors = [
 stickwidth = 20
 
 
-def angle_cal(arm_coord, elbow_coord, hand_coord):
-    a = arm_coord
-    e = elbow_coord
-    h = hand_coord
+def angle_cal(a, e, h):
+    """
+    calculate angle beween lenth ae and he from three coordinates(in tuple)
+    """
     ae = (e[0] - a[0], e[1] - a[1])
     he = (e[0] - h[0], e[1] - h[1])
 
     dot = ae[0] * he[0] + ae[1] * he[1]
     # rotate axis to align with positive direction
     cross = ae[0] * he[1] - ae[1] * he[0]
-
     alpha = math.atan2(cross, dot)
     degree = math.degrees(alpha)
     return degree
